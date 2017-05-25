@@ -38,15 +38,18 @@ class UserStorage extends Nette\Object implements Nette\Security\IUserStorage
 	/**
 	 * Sets the authenticated status of this user.
 	 * @param  bool
+	 * @param  bool
 	 * @return self
 	 */
-	public function setAuthenticated($state)
+	public function setAuthenticated($state, $regenerateSession = true)
 	{
 		$section = $this->getSessionSection(TRUE);
 		$section->authenticated = (bool) $state;
 
 		// Session Fixation defence
-		$this->sessionHandler->regenerateId();
+		if ($regenerateSession) {
+			$this->sessionHandler->regenerateId();
+		}
 
 		if ($state) {
 			$section->reason = NULL;
